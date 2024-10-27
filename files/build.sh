@@ -2,6 +2,7 @@ project=${PWD##*/}
 
 build() {
     rm -rf build
+    rm -rf out
     mkdir build
     mkdir out
     cd build
