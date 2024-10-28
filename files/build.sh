@@ -1,4 +1,13 @@
 project=${PWD##*/}
+args=("$@")
+
+run() {
+    "${PWD}/out/${project}" "$@"
+}
+
+debug() {
+    valgrind -s --leak-check=full --track-origins=yes "${PWD}/out/${project}" "$@"
+}
 
 build() {
     rm -rf build
@@ -11,12 +20,21 @@ build() {
     cp $project ../out/
     cd ..
 
-    if [[ $1 == "--run" ]] || [[ $2 == "--run" ]]; then
-        "out/${project}"
-    elif [[ $1 == "--debug" ]] || [[ $2 == "--debug" ]]; then
-        valgrind -s --leak-check=full --track-origins=yes "out/${project}"
+    if [[ $1 == "--run" ]]; then
+        shift 1
+        run "$@"
+    elif [[ $2 == "--run" ]]; then
+        shift 2
+        run "$@"
+    elif [[ $1 == "--debug" ]]; then
+        shift 1
+        debug "$@"
+    elif [[ $2 == "--debug" ]]; then
+        shift 2
+        debug "$@"
     fi
 }
+
 
 libs() {
     git clone "https://github.com/higgsbi/normalc.git"
@@ -48,6 +66,7 @@ Examples:
     ./build.sh                    (build without running)    
 
 ";
+
 elif [[ $1 == "--clean" ]]; then
     rm -rf build
     rm -rf out
@@ -55,11 +74,11 @@ elif [[ $1 == "--clean" ]]; then
     rm -rf lib
 elif [[ $1 == "--cached" ]]; then
     if [[ -d lib ]]; then
-        build $1 $2
+        build "${args[@]}"
     else
         printf "Library has not been downloaded yet. Run without the '--cached' argument\n"
     fi
 else 
     libs
-    build $1 $2
+    build "${args[@]}"
 fi
