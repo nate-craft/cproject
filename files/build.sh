@@ -22,7 +22,11 @@ libs() {
     rm -rf normalc
 }
 
-if [[ $1 == "--clean" ]]; then
+if [[ $1 == "--help" ]]; then
+    printf "\nBuilt via CProject\n\nFlags:\n
+    --clean:   removes build directories
+    --cached:  builds without downloading the normalc library\n\n";
+elif [[ $1 == "--clean" ]]; then
     rm -rf build
     rm -rf out
     rm -rf include
