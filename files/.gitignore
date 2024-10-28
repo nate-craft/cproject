@@ -1,0 +1,11 @@
+build/
+out/
+include/
+libs/
+vgcore*
+*.out
+*.o
+*.a
+*.gch
+*.swp
+
