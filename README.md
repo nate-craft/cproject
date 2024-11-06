@@ -8,3 +8,10 @@ Ordered arguments:
 
 Example:
   `bash cproject/generate.sh cproject/ my_project_name`
+
+I would recommend creating an alias for project generation like so:
+  `alias cproject='~/YOUR_PATH_HERE/generate.sh ~/YOUR_PATH_HERE/cproject/'`
+
+This can alter be used simply:
+  `cproject my_project_name`
+
