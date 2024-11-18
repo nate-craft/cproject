@@ -1,53 +1,8 @@
-project=${PWD##*/}
-args=("$@")
-
-run() {
-    "${PWD}/out/${project}" "$@"
-}
-
-debug() {
-    valgrind -s --leak-check=full --track-origins=yes "${PWD}/out/${project}" "$@"
-}
-
-build() {
-    rm -rf build
-    rm -rf out
-    mkdir build
-    mkdir out
-    cd build
-    cmake ..
-    make 
-    cp $project ../out/
-    cd ..
-
-    if [[ $1 == "--run" ]]; then
-        shift 1
-        run "$@"
-    elif [[ $2 == "--run" ]]; then
-        shift 2
-        run "$@"
-    elif [[ $1 == "--debug" ]]; then
-        shift 1
-        debug "$@"
-    elif [[ $2 == "--debug" ]]; then
-        shift 2
-        debug "$@"
-    fi
-}
-
-
-libs() {
-    git clone "https://github.com/higgsbi/normalc.git"
-    cd normalc
-    chmod +x install.sh
-    ./install.sh --local
-    cp -r out/* ../
-    cd ..
-    rm -rf normalc
-}
-
-if [[ $1 == "--help" ]]; then
-    printf "
+PROJECT=${PWD##*/}
+LIB="normalc"
+CACHED=false
+RUN_TYPE=""
+HELP_MESSAGE="
 Built via CProject
     
 Flags:
@@ -67,18 +22,65 @@ Examples:
 
 ";
 
-elif [[ $1 == "--clean" ]]; then
+build() {
     rm -rf build
     rm -rf out
-    rm -rf include
-    rm -rf lib
-elif [[ $1 == "--cached" ]]; then
-    if [[ -d lib ]]; then
-        build "${args[@]}"
-    else
-        printf "Library has not been downloaded yet. Run without the '--cached' argument\n"
-    fi
-else 
+    mkdir build
+    mkdir out
+    cd build
+    cmake ..
+    make 
+    cp $PROJECT ../out/
+    cd ..
+}
+
+libs() {
+    git clone "https://github.com/higgsbi/${LIB}.git"
+    cd $LIB
+    chmod +x install.sh
+    ./install.sh --local
+    cp -r out/* ../
+    cd ..
+    rm -rf $LIB
+}
+
+for i in "$@"; do
+    case $i in
+        -h|--help)
+            printf $HELP_MESSAGE
+            exit 0
+            ;;
+        -C|--clean)
+            rm -rf build
+            rm -rf out
+            rm -rf include
+            rm -rf lib
+            printf "Directories have been cleared!\n"
+            exit 0
+            ;;
+        -c|--cached)
+            CACHED=true
+            shift
+            ;;
+        -d|--debug)
+            RUN_TYPE="debug"
+            shift
+            ;;
+        -r|--run)
+            RUN_TYPE="run"
+            shift
+            ;;
+    esac
+done
+
+if ! $CACHED || [ ! -d lib ]; then
     libs
-    build "${args[@]}"
+fi
+
+build
+
+if [[ $RUN_TYPE == "run" ]]; then
+    "${PWD}/out/${PROJECT}" "$@" 
+elif [[ $RUN_TYPE == "debug" ]]; then
+    valgrind -s --leak-check=full --track-origins=yes "${PWD}/out/${PROJECT}" "$@"
 fi
