@@ -1,14 +1,14 @@
 PROJECT=${PWD##*/}
-LIB="normalc"
+LIB="ctk"
 CACHED=false
 RUN_TYPE=""
 HELP_MESSAGE="
 Built via CProject
-    
+
 Flags:
     
     --clean:   removes build directories
-    --cached:  builds without downloading the normalc library
+    --cached:  builds without downloading the $LIB library
     --run:     runs the built file
     --debug:   runs the built file with valgrind
 
@@ -20,7 +20,7 @@ Examples:
     ./build.sh --cached --debug   (build and debug without library install)
     ./build.sh                    (build without running)    
 
-";
+"
 
 build() {
     rm -rf build
@@ -37,8 +37,8 @@ build() {
 libs() {
     git clone "https://github.com/higgsbi/${LIB}.git"
     cd $LIB
-    chmod +x install.sh
-    ./install.sh --local
+    chmod +x build.sh
+    ./build.sh --local
     cp -r out/* ../
     cd ..
     rm -rf $LIB
@@ -47,7 +47,7 @@ libs() {
 for i in "$@"; do
     case $i in
         -h|--help)
-            printf $HELP_MESSAGE
+            printf "%s" "$HELP_MESSAGE"
             exit 0
             ;;
         -C|--clean)
