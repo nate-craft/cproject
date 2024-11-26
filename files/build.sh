@@ -1,5 +1,6 @@
 PROJECT=${PWD##*/}
 LIB="ctk"
+RELEASE=false
 CACHED=false
 RUN_TYPE=""
 HELP_MESSAGE="
@@ -14,11 +15,13 @@ Flags:
 
 Examples:
 
-    ./build.sh --clean            (clean build directories)
-    ./build.sh --cached           (build without library install)
-    ./build.sh --cached --run     (build and run without library install)
-    ./build.sh --cached --debug   (build and debug without library install)
-    ./build.sh                    (build without running)    
+    ./build.sh --clean                     (clean build directories)
+    ./build.sh --cached                    (build without library install)
+    ./build.sh --release                   (build without library install with O3 option)
+    ./build.sh --cached --run              (build and run without library install)
+    ./build.sh --cached --run --release    (build and run without library install with O3 option)
+    ./build.sh --cached --debug            (build and debug without library install)
+    ./build.sh                             (build without running)    
 
 "
 
@@ -28,7 +31,11 @@ build() {
     mkdir build
     mkdir out
     cd build
-    cmake ..
+    if [[ $RELEASE ]]; then
+        cmake -DCMAKE_BUILD_TYPE=Release ..
+    else
+        cmake -DCMAKE_BUILD_TYPE=Debug ..
+    fi
     make 
     cp $PROJECT ../out/
     cd ..
@@ -64,10 +71,15 @@ for i in "$@"; do
             ;;
         -d|--debug)
             RUN_TYPE="debug"
+            RELEASE=false
             shift
             ;;
         -r|--run)
             RUN_TYPE="run"
+            shift
+            ;;
+        -R|--release)
+            RELEASE=true
             shift
             ;;
     esac

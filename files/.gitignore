@@ -2,6 +2,7 @@ build/
 out/
 include/
 libs/
+.cache/
 vgcore*
 *.out
 *.o
