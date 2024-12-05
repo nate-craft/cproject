@@ -1,6 +1,6 @@
 # CProject
 
-CProject generates a sample project with the [normalc](https://github.com/higgsbi/normalc) library.
+CProject generates a sample project with the [ctk](https://github.com/higgsbi/ctk) library.
 
 Ordered arguments:
   1. Path to this directory 

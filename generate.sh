@@ -1,4 +1,6 @@
-if [[ $1 == "--help" ]] then
+#!/bin/bash
+
+if [[ $1 == "--help" ]]; then
     printf "CProject: generate C projects quickly\n\nUsage: project project_name cproject_path\n"
     exit 1
 fi
@@ -18,7 +20,7 @@ if [[ ! -d "${1}/files" ]]; then
     exit 1
 fi 
 
-mkdir $2
-cp -r "${1}/files/." $2
-cd $2
-printf "Project ${2} has been generated\n"
+mkdir "$2"
+cp -r "${1}/files/." "$2"
+cd "$2" || exit 1
+printf "%s\n", "Project ${2} has been generated"
