@@ -7,6 +7,7 @@ PROJECT=${PWD##*/}
 LIB="ctk"
 RELEASE=false
 CACHED=false
+SYSTEM_INSTALL=false
 RUN_TYPE=""
 
 HELP_MESSAGE="
@@ -21,6 +22,7 @@ $RESET
   [$ITALIC --run     $RESET| $ITALIC-r$RESET ]:   runs the built file
   [$ITALIC --debug   $RESET| $ITALIC-d$RESET ]:   runs the built file with valgrind
   [$ITALIC --release $RESET| $ITALIC-R$RESET ]:   builds with O3 compiler flags
+  [$ITALIC --system  $RESET| $ITALIC-s$RESET ]:   installs executable system wide
 \
 \
 $BOLD
@@ -33,6 +35,7 @@ $RESET
   ./build.sh --cached --run            (build and run without library install)
   ./build.sh --cached --run --release  (build and run without library install with O3 option)
   ./build.sh --cached --debug          (build and debug without library install)
+  ./build.sh --system                  (build and install system wide)
   ./build.sh                           (build without running)    
 
 "
@@ -48,8 +51,13 @@ build() {
     else
         cmake -DCMAKE_BUILD_TYPE=Debug ..
     fi
-    make 
-    cp "$PROJECT" ../out/
+    if [[ $SYSTEM_INSTALL = "true" ]]; then
+        sudo make install
+    else
+        make 
+        cp "$PROJECT" ../out/
+    fi
+    
     cd .. || exit 1
 }
 
@@ -92,6 +100,10 @@ for i in "$@"; do
             ;;
         -R|--release)
             RELEASE=true
+            shift
+            ;;
+        -S|--system)
+            SYSTEM_INSTALL=true
             shift
             ;;
     esac
