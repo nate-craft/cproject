@@ -53,7 +53,7 @@ build() {
     else
         cmake -DCMAKE_BUILD_TYPE=Debug ..
     fi
-    if [[ $SYSTEM_INSTALL = "true" ]]; then
+    if [[ $SYSTEM_INSTALL == "true" ]]; then
         sudo make install
     else
         make 
