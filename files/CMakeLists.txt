@@ -9,16 +9,10 @@ link_directories(${PROJECT_SOURCE_DIR}/lib)
 
 add_executable(${PROJECT_NAME} 
 	src/main.c
-	src/audio.c
-	src/brightness.c
-	src/audio.h
-	src/brightness.h
-	src/settings.h
 )
 
 if(NOT CMAKE_BUILD_TYPE) 
 	set(CMAKE_BUILD_TYPE Release) 
-	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_STRIP} --strip-unneeded $<TARGET_FILE:${PROJECT_NAME}>)
 endif() 
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release") 
