@@ -23,7 +23,7 @@ $RESET
   [$ITALIC --debug   $RESET| $ITALIC-d$RESET ]:   runs the built file with valgrind
   [$ITALIC --release $RESET| $ITALIC-R$RESET ]:   builds with O3 compiler flags
   [$ITALIC --system  $RESET| $ITALIC-s$RESET ]:   installs executable system wide
-  [$ITALIC --delete  $RESET| $ITALIC-d$RESET ]:   uninstalls executable system wide
+  [$ITALIC --delete  $RESET| $ITALIC-D$RESET ]:   uninstalls executable system wide
 \
 \
 $BOLD
@@ -108,7 +108,7 @@ for i in "$@"; do
             SYSTEM_INSTALL=true
             shift
             ;;
-        -d|--delete)
+        -D|--delete)
             sudo rm -I /usr/local/bin/"$PROJECT"
             exit 0
             ;;
