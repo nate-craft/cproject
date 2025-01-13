@@ -1,10 +1,12 @@
 ---
 BasedOnStyle: Google
 IndentWidth: 4
+TabWidth: 4
 IncludeBlocks: Merge
 DerivePointerAlignment: false
 PointerAlignment: Left
 QualifierAlignment: Left
+AlignAfterOpenBracket: BlockIndent
 AllowShortFunctionsOnASingleLine: false
 SpaceAfterCStyleCast: true
 SpacesInContainerLiterals: true
