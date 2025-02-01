@@ -106,9 +106,8 @@ while [ "$#" -gt 0 ]; do
             sudo rm -I /usr/local/bin/"$PROJECT"
             exit 0
             ;;
-        \?)
-            printf "Invalid option: -%s\n" "$OPTARG" >&2
-            exit 1
+        *)
+            break
             ;;
     esac
 done
@@ -124,3 +123,4 @@ if [ "$RUN_TYPE" = "run" ]; then
 elif [ "$RUN_TYPE" = "debug" ]; then
     valgrind -s --leak-check=full --track-origins=yes "${PWD}/out/${PROJECT}" "$@"
 fi
+
