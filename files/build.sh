@@ -19,19 +19,19 @@ HELP="
 ${CYAN}${BRIGHT}$(basename "$PWD")${RESET} - built with cproject
 
 ${CYAN}${BRIGHT}Flags:${RESET}
-  [ ${ITALIC}--clean${RESET}  | ${ITALIC}-C${RESET} ]:   ${YELLOW}removes build directories
-  [ ${ITALIC}--cached${RESET} | ${ITALIC}-c${RESET} ]:   ${YELLOW}builds without downloading the ${LIB} library
-  [ ${ITALIC}--run${RESET}    | ${ITALIC}-r${RESET} ]:   ${YELLOW}runs the built file
-  [ ${ITALIC}--debug${RESET}  | ${ITALIC}-d${RESET} ]:   ${YELLOW}runs the built file with valgrind
-  [ ${ITALIC}--release${RESET}| ${ITALIC}-R${RESET} ]:   ${YELLOW}builds with O3 compiler flags
-  [ ${ITALIC}--system${RESET} | ${ITALIC}-s${RESET} ]:   ${YELLOW}installs executable system-wide
-  [ ${ITALIC}--delete${RESET} | ${ITALIC}-D${RESET} ]:   ${YELLOW}uninstalls executable system-wide
+  ${GREEN}[ ${ITALIC}--clean${RESET}   ${GREEN}| ${GREEN}${ITALIC}-C${RESET}${GREEN} ]:   ${YELLOW}(removes build directories)
+  ${GREEN}[ ${ITALIC}--cached${RESET}  ${GREEN}| ${GREEN}${ITALIC}-c${RESET}${GREEN} ]:   ${YELLOW}(builds without downloading the ${LIB} library)
+  ${GREEN}[ ${ITALIC}--run${RESET}     ${GREEN}| ${GREEN}${ITALIC}-r${RESET}${GREEN} ]:   ${YELLOW}(runs the built file)
+  ${GREEN}[ ${ITALIC}--debug${RESET}   ${GREEN}| ${GREEN}${ITALIC}-d${RESET}${GREEN} ]:   ${YELLOW}(runs the built file with valgrind)
+  ${GREEN}[ ${ITALIC}--release${RESET} ${GREEN}| ${GREEN}${ITALIC}-R${RESET}${GREEN} ]:   ${YELLOW}(builds with O3 compiler flags)
+  ${GREEN}[ ${ITALIC}--system${RESET}  ${GREEN}| ${GREEN}${ITALIC}-s${RESET}${GREEN} ]:   ${YELLOW}(installs executable system-wide)
+  ${GREEN}[ ${ITALIC}--delete${RESET}  ${GREEN}| ${GREEN}${ITALIC}-D${RESET}${GREEN} ]:   ${YELLOW}(uninstalls executable system-wide)
 
 ${CYAN}${BRIGHT}Examples:${RESET}
   ${GREEN}./build.sh --clean                   ${YELLOW}(clean build directories)
   ${GREEN}./build.sh --cached                  ${YELLOW}(build without library install)
   ${GREEN}./build.sh --release                 ${YELLOW}(build without library install with O3 option)
-  ${GREEN}./build.sh --cached --run            ${YELLOW} (build and run without library install)
+  ${GREEN}./build.sh --cached --run            ${YELLOW}(build and run without library install)
   ${GREEN}./build.sh --cached --run --release  ${YELLOW}(build and run without library install with O3 option)
   ${GREEN}./build.sh --cached --debug          ${YELLOW}(build and debug without library install)
   ${GREEN}./build.sh --system                  ${YELLOW}(build and install system-wide)
