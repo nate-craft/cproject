@@ -1,0 +1,75 @@
+#!/usr/bin/env sh
+
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+RED=$(tput setaf 1)
+CYAN=$(tput setaf 6)
+BRIGHT=$(tput bold)
+RESET=$(tput sgr0)
+
+HELP="
+${CYAN}${BRIGHT}Usage:${RESET}
+
+  ${GREEN} ./cproject --help                ${YELLOW}(prints this help message)
+  ${GREEN} ./cproject --install             ${YELLOW}(installs cproject system wide)
+  ${GREEN} ./cproject --uninstall           ${YELLOW}(uninstalls cproject system wide)
+  ${GREEN} cproject <project_name>          ${YELLOW}(builds new c project with system installation)
+
+${CYAN}${BRIGHT}Notes:${RESET}
+
+    ${GREEN}${YELLOW}./cproject --install,${GREEN} is required before usage 
+"
+
+SYSTEM_BIN="$HOME/.local/bin/cproject"
+SYSTEM_FILES="$HOME/.local/share/cproject/"
+
+msg() {
+    printf "%s%s%s\n" "$GREEN" "$@" "$RESET"  
+}
+
+panic() {	
+    printf "%s%s%s%s\n" "$RED" "[BUILD ERROR]: " "$@" "$RESET"  
+	exit 1
+}
+
+help() {
+	printf "%s%s\n" "$HELP" "$RESET"  
+	exit 1
+}
+
+uninstall() {
+	rm -rf "$SYSTEM_FILES" 
+	rm -rf "$SYSTEM_BIN"
+
+	msg "Successfully uninstalled cproject"
+}
+
+install() {
+	rm -rf "$SYSTEM_FILES" 
+	rm -rf "$SYSTEM_BIN" 
+
+	mkdir -p "$SYSTEM_FILES" || panic "Could not create ${SYSTEM_FILES} directory"
+	cp -r ./files/* "$SYSTEM_FILES" || panic "Could not copy project files to ${SYSTEM_FILES} directory"
+	cp cproject "$SYSTEM_BIN" || panic "Could not install cproject binary to ${SYSTEM_BIN}"
+
+	msg "Successfully installed cproject"
+}
+
+build() {
+	mkdir "$1" || panic "Could not create project directory for ${1}"
+	cp -r $SYSTEM_FILES* "$1" || panic "Could not copy cproject files to ${1}"
+	cd "$1"
+	./build.sh 
+}
+
+if [ "$1" = "--install" ]; then
+	install
+elif [ "$1" = "--uninstall" ]; then
+	uninstall
+elif [ -d "$SYSTEM_FILES" ] && [ -f "$SYSTEM_BIN" ] && ! [ -z "$1" ]; then
+	build "$1"	
+else 
+	help
+    exit 1
+fi
+

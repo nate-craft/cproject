@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.0)
+﻿cmake_minimum_required(VERSION 3.10...4.0)
 get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 project(${PROJECT_NAME})
 
@@ -29,3 +29,4 @@ set(CMAKE_C_FLAGS_MINSIZEREL "-Os -DNDEBUG")
 target_link_libraries(${PROJECT_NAME} ctk)
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+

@@ -41,30 +41,32 @@ build() {
     rm -rf out
     mkdir build
     mkdir out
-    cd build || exit 1
-    if [ "$RELEASE" = "true" ]; then
-        cmake -DCMAKE_BUILD_TYPE=Release ..
-    else
-        cmake -DCMAKE_BUILD_TYPE=Debug ..
-    fi
-    if [ "$SYSTEM_INSTALL" = "true" ]; then
-        sudo make install
-    else
-        make
-        cp "$PROJECT" ../out/
-    fi
-    
-    cd .. || exit 1
+	(
+		cd build || exit 1
+
+		if [ "$RELEASE" = "true" ]; then
+			cmake -DCMAKE_BUILD_TYPE=Release ..
+		else
+			cmake -DCMAKE_BUILD_TYPE=Debug ..
+		fi
+		if [ "$SYSTEM_INSTALL" = "true" ]; then
+			sudo make install
+		else
+			make
+			cp "$PROJECT" ../out/
+		fi
+	)    
 }
 
 libs() {
-    git clone "https://github.com/higgsbi/${LIB}.git"
-    cd "$LIB" || exit 1
-    chmod +x build.sh
-    ./build.sh --local
-    cp -r out/* ../
-    cd ..
-    rm -rf "$LIB"
+    git clone "https://github.com/nate-craft/${LIB}.git"
+	(
+		cd "$LIB" || exit 1
+		chmod +x build.sh
+		./build.sh --local
+		cp -r out/* ../
+	)
+	rm -rf "$LIB"
 }
 
 while [ "$#" -gt 0 ]; do
