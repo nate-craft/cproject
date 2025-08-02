@@ -1,40 +1,58 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
-BOLD=$(printf '\033[1m')
-ITALIC=$(printf '\033[3m')
-RESET=$(printf '\033[0m')
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+RED=$(tput setaf 1)
+CYAN=$(tput setaf 6)
+BRIGHT=$(tput bold)
+RESET=$(tput sgr0)
 
 PROJECT=${PWD##*/}
 LIB="ctk"
+LIB_URL="https://github.com/nate-craft/${LIB}.git"
 RELEASE=false
 CACHED=false
 SYSTEM_INSTALL=false
 RUN_TYPE=""
 
-HELP_MESSAGE="
-${BOLD}$(basename "$PWD")${RESET} - built via cproject
+HELP="
+${CYAN}${BRIGHT}$(basename "$PWD")${RESET} - built with cproject
 
-${BOLD}Flags:${RESET}
-  [ ${ITALIC}--clean${RESET}  | ${ITALIC}-C${RESET} ]:   removes build directories
-  [ ${ITALIC}--cached${RESET} | ${ITALIC}-c${RESET} ]:   builds without downloading the ${LIB} library
-  [ ${ITALIC}--run${RESET}    | ${ITALIC}-r${RESET} ]:   runs the built file
-  [ ${ITALIC}--debug${RESET}  | ${ITALIC}-d${RESET} ]:   runs the built file with valgrind
-  [ ${ITALIC}--release${RESET}| ${ITALIC}-R${RESET} ]:   builds with O3 compiler flags
-  [ ${ITALIC}--system${RESET} | ${ITALIC}-s${RESET} ]:   installs executable system-wide
-  [ ${ITALIC}--delete${RESET} | ${ITALIC}-D${RESET} ]:   uninstalls executable system-wide
+${CYAN}${BRIGHT}Flags:${RESET}
+  [ ${ITALIC}--clean${RESET}  | ${ITALIC}-C${RESET} ]:   ${YELLOW}removes build directories
+  [ ${ITALIC}--cached${RESET} | ${ITALIC}-c${RESET} ]:   ${YELLOW}builds without downloading the ${LIB} library
+  [ ${ITALIC}--run${RESET}    | ${ITALIC}-r${RESET} ]:   ${YELLOW}runs the built file
+  [ ${ITALIC}--debug${RESET}  | ${ITALIC}-d${RESET} ]:   ${YELLOW}runs the built file with valgrind
+  [ ${ITALIC}--release${RESET}| ${ITALIC}-R${RESET} ]:   ${YELLOW}builds with O3 compiler flags
+  [ ${ITALIC}--system${RESET} | ${ITALIC}-s${RESET} ]:   ${YELLOW}installs executable system-wide
+  [ ${ITALIC}--delete${RESET} | ${ITALIC}-D${RESET} ]:   ${YELLOW}uninstalls executable system-wide
 
-${BOLD}Examples:${RESET}
-  ./build.sh --clean                   (clean build directories)
-  ./build.sh --cached                  (build without library install)
-  ./build.sh --release                 (build without library install with O3 option)
-  ./build.sh --cached --run            (build and run without library install)
-  ./build.sh --cached --run --release  (build and run without library install with O3 option)
-  ./build.sh --cached --debug          (build and debug without library install)
-  ./build.sh --system                  (build and install system-wide)
-  ./build.sh --delete                  (uninstall executable system-wide)
-  ./build.sh                           (build without running)
+${CYAN}${BRIGHT}Examples:${RESET}
+  ${GREEN}./build.sh --clean                   ${YELLOW}(clean build directories)
+  ${GREEN}./build.sh --cached                  ${YELLOW}(build without library install)
+  ${GREEN}./build.sh --release                 ${YELLOW}(build without library install with O3 option)
+  ${GREEN}./build.sh --cached --run            ${YELLOW} (build and run without library install)
+  ${GREEN}./build.sh --cached --run --release  ${YELLOW}(build and run without library install with O3 option)
+  ${GREEN}./build.sh --cached --debug          ${YELLOW}(build and debug without library install)
+  ${GREEN}./build.sh --system                  ${YELLOW}(build and install system-wide)
+  ${GREEN}./build.sh --delete                  ${YELLOW}(uninstall executable system-wide)
+  ${GREEN}./build.sh                           ${YELLOW}(build without running)
 
 "
+
+msg() {
+    printf "%s%s%s\n" "$GREEN" "$@" "$RESET"  
+}
+
+panic() {	
+    printf "%s%s%s%s\n" "$RED" "[BUILD ERROR]: " "$@" "$RESET"  
+	exit 1
+}
+
+help() {
+	printf "%s%s\n" "$HELP" "$RESET"  
+	exit 1
+}
 
 build() {
     rm -rf build
@@ -42,13 +60,14 @@ build() {
     mkdir build
     mkdir out
 	(
-		cd build || exit 1
+		cd build || panic "Could not move into build directory" 
 
 		if [ "$RELEASE" = "true" ]; then
 			cmake -DCMAKE_BUILD_TYPE=Release ..
 		else
 			cmake -DCMAKE_BUILD_TYPE=Debug ..
 		fi
+
 		if [ "$SYSTEM_INSTALL" = "true" ]; then
 			sudo make install
 		else
@@ -59,9 +78,9 @@ build() {
 }
 
 libs() {
-    git clone "https://github.com/nate-craft/${LIB}.git"
+	git clone "$LIB_URL"
 	(
-		cd "$LIB" || exit 1
+		cd "$LIB" || panic "Could not move into ${LIB} directory" 
 		chmod +x build.sh
 		./build.sh --local
 		cp -r out/* ../
@@ -72,15 +91,14 @@ libs() {
 while [ "$#" -gt 0 ]; do
     case "$1" in
         -h|--help)
-            printf "%s" "$HELP_MESSAGE"
-            exit 0
+			help
             ;;
         -C|--clean)
             rm -rf build
             rm -rf out
             rm -rf include
             rm -rf lib
-            printf 'Directories have been cleared!\n'
+            msg 'Directories have been cleared!'
             exit 0
             ;;
         -c|--cached)
@@ -104,7 +122,7 @@ while [ "$#" -gt 0 ]; do
             SYSTEM_INSTALL=true
             shift
             ;;
-        -D|--delete)
+        -u|--uninstall)
             sudo rm -I /usr/local/bin/"$PROJECT"
             exit 0
             ;;
